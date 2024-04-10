@@ -34,11 +34,14 @@ std::set<std::string> wordle(
 // Define any helper functions here
 void wordleHelper(string prefix, std::set<string>& words, const std::string& in, std::string floating, const std::set<string>& dict){
 
-    //if the prefix is the same size as in, check if it is a valid word in the dictionary
+    //if the prefix is the same size as in
     if(prefix.size() == in.size()){
-        if(dict.find(prefix) != dict.end()){
-            //check if we have no more floating characters
-            if(floating.size() == 0){
+        //check if we have no more floating characters
+        if(floating.size() == 0){
+            //check if it is a valid word
+            if(dict.find(prefix) != dict.end()){
+                
+            
                 #ifdef DEBUG
                     cerr << "Inserting: " << prefix << endl;
                 #endif
