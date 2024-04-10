@@ -14,7 +14,7 @@ using namespace std;
 bool flag = false;
 
 // Add prototypes of helper functions here
-void wordleHelper(const string& prefix, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
+//void wordleHelper(const string& prefix, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
 void wordleHelper(const string& prefix, int empty, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
 
 
