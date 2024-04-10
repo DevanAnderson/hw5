@@ -11,11 +11,10 @@
 #include "dict-eng.h"
 using namespace std;
 
-bool flag = false;
-
 // Add prototypes of helper functions here
 //void wordleHelper(const string& prefix, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
-void wordleHelper(const string& prefix, int empty, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
+//using references to reduce time calling copy constructor and copying
+void wordleHelper(const string& prefix, const int& empty, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
 
 
 // Definition of primary wordle function
@@ -44,15 +43,15 @@ std::set<std::string> wordle(
 }
 
 // Define any helper functions here
-void wordleHelper(const string& prefix, int empty, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict){
+void wordleHelper(const string& prefix, const int& empty, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict){
     //if the prefix is the same size as in
     if(prefix.size() == in.size()){
-        //check if we have no more floating characters
-        if(floating.size() == 0){
-            //check if it is a valid word
-            if(dict.find(prefix) != dict.end()){
+        //check if we have no more floating characters and that it is a valid word
+        //first condition MUST come first for optimization
+        //due to short circuiting, if the first condition is false,
+        //we do not have to check the second
+        if(floating.size() == 0 && dict.find(prefix) != dict.end()){
                 words.insert(prefix);
-            }
         }
         return;
     }
@@ -64,23 +63,23 @@ void wordleHelper(const string& prefix, int empty, std::set<string>& words, cons
     }
 
     //if there are more floating characters than positions left to fill, then we hit a dead end
-    if(empty < floating.size()){
+    if(floating.size() > empty){
         return;
     }
 
-    //this is broken??
     //if there are exactly the same amount of floating characters as there are open positions to fill, then we know it is a combination of these floating characters
     if(empty == floating.size()){
         #ifdef DEBUG_2
             cerr << "should not be here: " << prefix << " Empty: " << empty << " Floating: " << floating << endl;
         #endif
+
+        //try every combination of the floating characters appended to the end of the prefix
         for(int i = 0; i < floating.size(); ++i){
             string floating2 = floating;
             //erase the floating character that we are appending
             //floating2 = floating.substr(0, i) + floating.substr(i + 1);
             floating2.erase(i, 1);
-            int empty2 = empty - 1;
-            wordleHelper(prefix + floating.at(i), empty2, words, in, floating2, dict);
+            wordleHelper(prefix + floating.at(i), empty - 1, words, in, floating2, dict);
         }
         return;
     }
@@ -93,15 +92,13 @@ void wordleHelper(const string& prefix, int empty, std::set<string>& words, cons
     #endif
     //otherwise, try all letters
     for(char c = 'a'; c <= 'z'; ++c){
-        int empty2 = empty - 1;
         string floating2 = floating;
         size_t loc = floating.find(c);
         if(loc != string::npos){
             floating2.erase(loc, 1);
             //floating2 = floating.substr(0, loc) + floating.substr(loc + 1);
         }
-
-        wordleHelper(prefix + c, empty2, words, in, floating2, dict);
+        wordleHelper(prefix + c, empty - 1, words, in, floating2, dict);
     }
 }
 
