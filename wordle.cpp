@@ -76,15 +76,22 @@ void wordleHelper(string prefix, std::set<string>& words, const std::string& in,
         cerr << "Prefix:" << prefix << ' ' << "Floating: " << floating <<endl;
         #endif
 
-        //if the character we are inserting happens to be one of the floating characters, erase it from the floating characters
         string floating2 = floating;
-        for(int i = 0; i < floating.size(); ++i){
-            if(c == floating2.at(i)){
-                floating2.erase(i, 1);
-                //break to erase only one of the floating characters
-                break;
-            }
+        size_t loc = floating.find(c);
+        if(loc != string::npos){
+            floating2.erase(loc, 1);
         }
+
+        //too slow, maybe remove this
+        //if the character we are inserting happens to be one of the floating characters, erase it from the floating characters
+        // string floating2 = floating;
+        // for(int i = 0; i < floating.size(); ++i){
+        //     if(c == floating2.at(i)){
+        //         floating2.erase(i, 1);
+        //         //break to erase only one of the floating characters
+        //         break;
+        //     }
+        // }
 
         wordleHelper(prefix + c, words, in, floating2, dict);
     }
