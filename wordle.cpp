@@ -11,11 +11,9 @@
 #include "dict-eng.h"
 using namespace std;
 
-int iter = 0;
-
 
 // Add prototypes of helper functions here
-void wordleHelper(string prefix, std::set<string>& words, const std::string& in, std::string floating,const std::set<string>& dict);
+void wordleHelper(const string& prefix, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict);
 
 
 // Definition of primary wordle function
@@ -25,14 +23,22 @@ std::set<std::string> wordle(
     const std::set<std::string>& dict)
 {
     // Add your code here
-
+    //count the number of dashes
+    // int empty = 0;
+    // for(int i = 0; i < in.size(); ++i){
+    //     if(in.at(i) == '-'){
+    //         ++empty;
+    //     }
+    // }
+    
+    string floating2 = floating;
     std::set<string> words;
-    wordleHelper("", words, in, floating, dict);
+    wordleHelper("", words, in, floating2, dict);
     return words;
 }
 
 // Define any helper functions here
-void wordleHelper(string prefix, std::set<string>& words, const std::string& in, std::string floating, const std::set<string>& dict){
+void wordleHelper(const string& prefix, std::set<string>& words, const std::string& in, std::string& floating, const std::set<string>& dict){
 
     //if the prefix is the same size as in
     if(prefix.size() == in.size()){
@@ -40,8 +46,6 @@ void wordleHelper(string prefix, std::set<string>& words, const std::string& in,
         if(floating.size() == 0){
             //check if it is a valid word
             if(dict.find(prefix) != dict.end()){
-                
-            
                 #ifdef DEBUG
                     cerr << "Inserting: " << prefix << endl;
                 #endif
@@ -67,6 +71,7 @@ void wordleHelper(string prefix, std::set<string>& words, const std::string& in,
         for(int i = 0; i < floating.size(); ++i){
             string floating2 = floating;
             //erase the floating character that we are appending
+            //floating2 = floating.substr(0, i) + floating.substr(i + 1);
             floating2.erase(i, 1);
             wordleHelper(prefix + floating.at(i), words, in, floating2, dict);
         }
@@ -83,18 +88,8 @@ void wordleHelper(string prefix, std::set<string>& words, const std::string& in,
         size_t loc = floating.find(c);
         if(loc != string::npos){
             floating2.erase(loc, 1);
+            //floating2 = floating.substr(0, loc) + floating.substr(loc + 1);
         }
-
-        //too slow, maybe remove this
-        //if the character we are inserting happens to be one of the floating characters, erase it from the floating characters
-        // string floating2 = floating;
-        // for(int i = 0; i < floating.size(); ++i){
-        //     if(c == floating2.at(i)){
-        //         floating2.erase(i, 1);
-        //         //break to erase only one of the floating characters
-        //         break;
-        //     }
-        // }
 
         wordleHelper(prefix + c, words, in, floating2, dict);
     }
